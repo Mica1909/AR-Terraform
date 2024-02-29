@@ -11,10 +11,12 @@ module "vm_extension" {
 
   extension_settings = <<SETTINGS
     {
-      "commandToExecute": "powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server -IncludeAllSubFeature -IncludeManagementTools"
+      "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -Command (New-Object System.Net.WebClient).DownloadFile('https://arvpntest.blob.core.windows.net/hola/hola_mundo.ps1', 'C:\\temp\\hola_mundo.ps1'); C:\\temp\\hola_mundo.ps1"
     }
   SETTINGS
 }
+
+
 
 # Define los recursos restantes
 resource "azurerm_resource_group" "rg" {
