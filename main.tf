@@ -117,8 +117,8 @@ resource "azurerm_windows_virtual_machine" "main" {
 }
 
 # Install IIS web server to the virtual machine
-module "modules" {
-  source = "./modules"  # Ruta al directorio del módulo
+module "vm_extension" {
+  source = "./module/vm_extension"  # Ruta al directorio del módulo
 
   prefix                    = var.prefix
   virtual_machine_id        = azurerm_windows_virtual_machine.main.id
@@ -129,7 +129,7 @@ module "modules" {
 
   extension_settings = <<SETTINGS
     {
-      "commandToExecute": "powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server -I>
+      "commandToExecute": "powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server -IncludeAllSubFeature -IncludeManagementTools"
     }
   SETTINGS
 }
