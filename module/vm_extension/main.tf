@@ -1,5 +1,5 @@
 resource "azurerm_virtual_machine_extension" "web_server_install" {
-  name                       = "${var.prefix}-wsi"
+  name                       = "test-wsi"
   virtual_machine_id         = var.virtual_machine_id
   publisher                  = var.publisher
   type                       = var.type
