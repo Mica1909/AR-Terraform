@@ -1,3 +1,22 @@
+# Define el módulo de extensión de la máquina virtual
+module "vm_extension" {
+  source = "./module/vm_extension"  # Ruta al directorio del módulo
+
+  prefix                    = var.prefix
+  virtual_machine_id        = azurerm_windows_virtual_machine.main.id
+  publisher                 = "Microsoft.Compute"
+  type                      = "CustomScriptExtension"
+  type_handler_version      = "1.8"
+  auto_upgrade_minor_version = true
+
+  extension_settings = <<SETTINGS
+    {
+      "commandToExecute": "powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server -IncludeAllSubFeature -IncludeManagementTools"
+    }
+  SETTINGS
+}
+
+# Define los recursos restantes
 resource "azurerm_resource_group" "rg" {
   location = var.resource_group_location
   name     = "${random_pet.prefix.id}-rg"
@@ -86,7 +105,6 @@ resource "azurerm_storage_account" "my_storage_account" {
   account_replication_type = "LRS"
 }
 
-
 # Create virtual machine
 resource "azurerm_windows_virtual_machine" "main" {
   name                  = "${var.prefix}-vm"
@@ -110,28 +128,9 @@ resource "azurerm_windows_virtual_machine" "main" {
     version   = "latest"
   }
 
-
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.my_storage_account.primary_blob_endpoint
   }
-}
-
-# Install IIS web server to the virtual machine
-module "vm_extension" {
-  source = "./module/vm_extension"  # Ruta al directorio del módulo
-
-  prefix                    = var.prefix
-  virtual_machine_id        = azurerm_windows_virtual_machine.main.id
-  publisher                 = "Microsoft.Compute"
-  type                      = "CustomScriptExtension"
-  type_handler_version      = "1.8"
-  auto_upgrade_minor_version= true
-
-  extension_settings = <<SETTINGS
-    {
-      "commandToExecute": "powershell -ExecutionPolicy Unrestricted Install-WindowsFeature -Name Web-Server -IncludeAllSubFeature -IncludeManagementTools"
-    }
-  SETTINGS
 }
 
 # Generate random text for a unique storage account name
